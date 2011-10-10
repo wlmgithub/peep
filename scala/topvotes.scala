@@ -10,11 +10,13 @@
 import scala.collection.mutable.HashMap
 
 def main(args:Array[String]) {
+
   val votes = List(
           ("Bob", 13),
           ("Ann", 3),
           ("Maria", 18)
-          )
+  )
+
   val topVotes = votes.filter{
       case(name, num) => num > 5
   }
