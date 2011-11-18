@@ -8,9 +8,9 @@ require 'json'
 class Campfire
   include HTTParty
 
-  base_uri   'https://37s.campfirenow.com'
-  basic_auth 'find_your_auth_key_on_member_slash_edit', 'x'
-  headers    'Content-Type' => 'application/json'
+  base_uri = 'https://37s.campfirenow.com'
+  basic_auth = 'find_your_auth_key_on_member_slash_edit', 'x'
+  headers = 'Content-Type' => 'application/json'
 
   def self.rooms
     Campfire.get('/rooms.json')["rooms"]
