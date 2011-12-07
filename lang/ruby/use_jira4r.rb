@@ -3,7 +3,8 @@ require 'jira4r'
 require 'highline/import'
 
 def get_password(prompt="Enter Password")
-   ask(prompt) {|q| q.echo = false}
+   #ask(prompt) {|q| q.echo = false}
+   ask(prompt) {|q| q.echo = '*'}
 end
 
 if ARGV.size != 1
