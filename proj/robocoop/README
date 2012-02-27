@@ -1,0 +1,10 @@
+
+The parse_dir.rb script has to be run under ~falconi as falcon.
+
+Here is how to run the script, taking 20120225 as an example.
+
+[falcon@smfc-ail-02-sr1 logs-twitterweb]$ pwd
+/home/falcon/hostmon/logs-twitterweb
+
+[falcon@smfc-ail-02-sr1 logs-twitterweb]$  for i in  $(ls -d 20120225*); do echo $i; ~/liming/parse_dir.rb  $i; done
+
