@@ -1,0 +1,11 @@
+set :branch, fetch(:branch, "foobar")
+
+desc "This is description of task :list_task"
+task :list_task do
+  begin
+    p branch.split
+    p "#{branch}"
+  rescue Exception => e
+    abort 'sssssss'
+  end
+end
