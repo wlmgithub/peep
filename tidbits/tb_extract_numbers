@@ -8,3 +8,6 @@ python
 [int(n) for n in s.split() if n.isdigit()] 
 
 
+perl
+====
+my @numbers = ($s =~ /(\d+)/g);
