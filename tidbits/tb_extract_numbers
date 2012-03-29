@@ -1,0 +1,10 @@
+
+ruby
+=====
+s.scan(/\d+/)
+
+python
+======
+[int(n) for n in s.split() if n.isdigit()] 
+
+
