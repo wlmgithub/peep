@@ -1,5 +1,5 @@
 
-The parse_dir.rb script has to be run under ~falconi as falcon.
+The parse_dir.rb script has to be run under ~falcon as falcon.
 
 Here is how to run the script, taking 20120225 as an example.
 
