@@ -1,0 +1,140 @@
+#!/usr/bin/env python
+#
+# Build Twitter App natively
+#
+#######################################
+# NOTE: removed password and profiles 
+#######################################
+import os
+import argparse
+from subprocess import call
+
+parser = argparse.ArgumentParser(description='Build Twitter app natively.')
+
+parser.add_argument('--debug', dest='debug', action='store_true', help='Debug mode')
+parser.add_argument('--build_type', dest='build_type', help='Type of build. Currently either Dogfood or Production')
+parser.add_argument('--train_name', dest='train_name', help='This is the TRAIN_NAME.')
+parser.add_argument('--train_display_name', dest='train_display_name', help='This is the TRAIN_DISPLAY_NAME.')
+
+args = parser.parse_args()
+
+if args.debug:
+  print args.build_type
+  print args.train_name
+  print args.train_display_name
+
+
+def make_build(build_type=None):
+  print "Building %s" % build_type
+  
+  if args.debug:
+    print "Current dir: %s"  % os.getcwd()
+    
+  call('mkdir -p  buildResults/%s' % build_type, shell=True)
+  
+  call('/usr/bin/xcodebuild -alltargets clean', shell=True)
+  
+  call("/usr/bin/xcodebuild -scheme %s  -configuration '%s' -sdk iphoneos DSTROOT=buildResults/%s  DWARF_DSYM_FOLDER_PATH=buildResults/%s  DEPLOYMENT_LOCATION=YES build" % ( SCHEME, CONFIGURATION, build_type, build_type), shell=True)
+
+  # package and sign
+  os.chdir('%s/Twitter/buildResults/%s/Applications' % (os.environ['WORKSPACE'], build_type))
+  
+  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign '%s' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/Twitter/buildResults/%s/Twitter.ipa'" % (SIGN, PROFILE, os.environ['WORKSPACE'], build_type), shell=True) 
+  
+  
+  
+###################
+def build_dogfood():
+  print "Building Dogfood"
+  
+  if args.debug:
+    print "Current dir: %s"  % os.getcwd()
+  
+  call('mkdir -p  buildResults/Dogfood', shell=True)
+
+  call('/usr/bin/xcodebuild -alltargets clean', shell=True)
+
+  call("/usr/bin/xcodebuild -scheme Enterprise  -configuration 'Enterprise (Release)' -sdk iphoneos DSTROOT=buildResults/Dogfood DWARF_DSYM_FOLDER_PATH=buildResults/Dogfood  DEPLOYMENT_LOCATION=YES build", shell=True)
+
+  # package and sign
+  os.chdir('%s/Twitter/buildResults/Dogfood/Applications' % os.environ['WORKSPACE'])
+
+  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign 'iPhone Distribution: Twitter' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/D05741DB-74E5-4677-B1B0-490B41112913.mobileprovision -o '%s/Twitter/buildResults/Dogfood/Twitter.ipa'" % os.environ['WORKSPACE'], shell=True) 
+
+  pass
+
+###################
+def build_production():
+  print "Building Production"
+  
+  call('mkdir -p  buildResults/Production', shell=True)
+
+  call('/usr/bin/xcodebuild -alltargets clean', shell=True)
+
+  call("/usr/bin/xcodebuild -scheme Production -target Twitter -configuration 'Production (Release)' -sdk iphoneos DSTROOT=buildResults/Production DWARF_DSYM_FOLDER_PATH=buildResults/Production  DEPLOYMENT_LOCATION=YES build", shell=True)
+
+  # package and sign
+  os.chdir('%s/Twitter/buildResults/Production/Applications' % os.environ['WORKSPACE'])
+
+  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign 'iPhone Distribution: Twitter, Inc.' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/4228BAF4-F544-4832-A3FA-0CAF3C50DC55.mobileprovision -o '%s/Twitter/buildResults/Production/Twitter.ipa'" % os.environ['WORKSPACE'], shell=True)
+
+  pass
+
+###################
+def make_preps():
+  # set needed env vars
+  # TRAIN_NAME shows in Settings -> About -> Version
+  # TRAIN_DISPLAY_NAME shows as the app name on home screen
+  os.environ['TRAIN_NAME'] = args.train_name
+  os.environ['TRAIN_DISPLAY_NAME'] = args.train_display_name
+
+  # unlock the iOS keychain so that the codesign util can run headless without user interaction
+  call('security unlock-keychain -p <insert_password>  %s/Library/Keychains/iOS.keychain' % os.environ['HOME'], shell=True)
+
+  call('rm -rf %s/Library/Developer/Xcode/DerivedData/Twitter-*/' % os.environ['HOME'], shell=True)
+  
+  call('cd %s' % os.environ['WORKSPACE'], shell=True)
+
+  call('git clean -df', shell=True)
+
+  os.chdir('%s/Twitter' % os.environ['WORKSPACE'])
+
+
+if __name__ == '__main__':
+  make_preps()
+
+  if args.debug:
+    print "Env Var TRAIN_NAME: %s" % os.environ['TRAIN_NAME']
+    print "Env Var TRAIN_DISPLAY_NAME: %s" % os.environ['TRAIN_DISPLAY_NAME']
+    print "Env Var HOME: %s" % os.environ['HOME']
+    print "Env Var WORKSPACE: %s" % os.environ['WORKSPACE']
+
+  ############################
+  ###### CONSTANTS HERE ######
+  ############################
+  CONFIGURATION=None
+  PROFILE=None
+  SCHEME=None
+  SIGN=None
+  
+  if args.build_type == 'Dogfood':
+    CONFIGURATION = 'Enterprise (Release)'
+    PROFILE = ''
+    SCHEME='Enterprise'
+    SIGN = 'iPhone Distribution: Twitter'
+  elif args.build_type == 'Production':
+    CONFIGURATION = 'Production (Release)'
+    PROFILE = ''
+    SCHEME='Production'
+    SIGN = 'iPhone Distribution: Twitter, Inc.'
+    
+  # now build it!
+  make_build(build_type=args.build_type)
+  
+""" leave the tested working part for now
+  if args.build_type == 'Dogfood':
+    build_dogfood()
+  elif args.build_type == 'Production':
+    build_production()
+""" 
+
