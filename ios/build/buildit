@@ -2,9 +2,6 @@
 #
 # Build Twitter App natively
 #
-#######################################
-# NOTE: removed password and profiles 
-#######################################
 import os
 import argparse
 from subprocess import call
@@ -33,13 +30,36 @@ def make_build(build_type=None):
   call('mkdir -p  buildResults/%s' % build_type, shell=True)
   
   call('/usr/bin/xcodebuild -alltargets clean', shell=True)
+
+  BUNDLE_ID_OVERRIDE = ''
+  if BUNDLE_ID is not None:
+    BUNDLE_ID_OVERRIDE = 'TWITTER_BUNDLE_IDENTIFIER=' + BUNDLE_ID
+
+  PROVISIONING_PROFILE_OVERRIDE = ''
+  if PROFILE is not None:
+    PROVISIONING_PROFILE_OVERRIDE = 'PROVISIONING_PROFILE=' + PROFILE
   
-  call("/usr/bin/xcodebuild -scheme %s  -configuration '%s' -sdk iphoneos DSTROOT=buildResults/%s  DWARF_DSYM_FOLDER_PATH=buildResults/%s  DEPLOYMENT_LOCATION=YES build" % ( SCHEME, CONFIGURATION, build_type, build_type), shell=True)
+  call("/usr/bin/xcodebuild -scheme %s  -configuration '%s' -sdk iphoneos DSTROOT=buildResults/%s  DWARF_DSYM_FOLDER_PATH=buildResults/%s  DEPLOYMENT_LOCATION=YES  RUN_CLANG_STATIC_ANALYZER=YES %s %s build" % ( SCHEME, CONFIGURATION, build_type, build_type, BUNDLE_ID_OVERRIDE, PROVISIONING_PROFILE_OVERRIDE), shell=True)
 
   # package and sign
   os.chdir('%s/Twitter/buildResults/%s/Applications' % (os.environ['WORKSPACE'], build_type))
   
-  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign '%s' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/Twitter/buildResults/%s/Twitter.ipa'" % (SIGN, PROFILE, os.environ['WORKSPACE'], build_type), shell=True) 
+  BUILD_CMD = "/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign '%s' --embed %s/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/Twitter/buildResults/%s/Twitter.ipa'"
+
+  build_cmd = BUILD_CMD % (
+    SIGN,
+    os.environ['HOME'],
+    PROFILE,
+    os.environ['WORKSPACE'],
+    build_type
+  )
+
+#  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign '%s' --embed %s/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/Twitter/buildResults/%s/Twitter.ipa'" % (SIGN, os.environ['HOME'], PROFILE, os.environ['WORKSPACE'], build_type), shell=True) 
+
+  if args.debug:
+    print "[DEBUG] running command: %s" % build_cmd
+
+  call(build_cmd, shell=True)
   
   
   
@@ -89,13 +109,20 @@ def make_preps():
   os.environ['TRAIN_DISPLAY_NAME'] = args.train_display_name
 
   # unlock the iOS keychain so that the codesign util can run headless without user interaction
-  call('security unlock-keychain -p <insert_password>  %s/Library/Keychains/iOS.keychain' % os.environ['HOME'], shell=True)
+  retcode = call('security unlock-keychain -p <passwd>  %s/Library/Keychains/login.keychain' % os.environ['HOME'], shell=True)
+
+  if retcode == 0:
+    print "security unlock-keychain ran successfully!"
+  else:
+    print "security unlock-keychain failed!"
 
   call('rm -rf %s/Library/Developer/Xcode/DerivedData/Twitter-*/' % os.environ['HOME'], shell=True)
   
   call('cd %s' % os.environ['WORKSPACE'], shell=True)
 
-  call('git clean -df', shell=True)
+  # only do this for Dogfood build.
+  if args.build_type == 'Dogfood':
+    call('git clean -df', shell=True)
 
   os.chdir('%s/Twitter' % os.environ['WORKSPACE'])
 
@@ -112,22 +139,54 @@ if __name__ == '__main__':
   ############################
   ###### CONSTANTS HERE ######
   ############################
-  CONFIGURATION=None
   PROFILE=None
-  SCHEME=None
-  SIGN=None
-  
+  CONFIGURATION = 'Enterprise (Release)'
+  SCHEME='Enterprise'
+  SIGN = 'iPhone Distribution: Twitter'
+  BUNDLE_ID=None
+
   if args.build_type == 'Dogfood':
-    CONFIGURATION = 'Enterprise (Release)'
     PROFILE = ''
-    SCHEME='Enterprise'
+  elif args.build_type == 'EnterpriseDemo':
+    CONFIGURATION = 'Enterprise Demo (Release)'
+    PROFILE = ''
+    SCHEME='Enterprise Demo'
     SIGN = 'iPhone Distribution: Twitter'
+  elif args.build_type == 'ProductionDemo':
+    CONFIGURATION = 'Production Demo (Release)'
+    PROFILE = ''
+    SCHEME='Production Demo'
+    SIGN = 'iPhone Distribution: Twitter, Inc.'
+  elif args.build_type == 'Prototype':
+    PROFILE = ''
   elif args.build_type == 'Production':
     CONFIGURATION = 'Production (Release)'
     PROFILE = ''
     SCHEME='Production'
     SIGN = 'iPhone Distribution: Twitter, Inc.'
-    
+
+  # Dogfood Alpha - Zeta
+  elif args.build_type == 'DogfoodAlpha':
+    PROFILE = ''
+    BUNDLE_ID = 'com.twitter.dogfood.internal.alpha'
+  elif args.build_type == 'DogfoodBeta':
+    PROFILE = ''
+    BUNDLE_ID = 'com.twitter.dogfood.internal.beta'
+  elif args.build_type == 'DogfoodGamma':
+    PROFILE = ''
+    BUNDLE_ID = 'com.twitter.dogfood.internal.gamma'
+  elif args.build_type == 'DogfoodEpsilon':
+    PROFILE = ''
+    BUNDLE_ID = 'com.twitter.dogfood.internal.epsilon'
+  elif args.build_type == 'DogfoodZeta':
+    PROFILE = ''
+    BUNDLE_ID = 'com.twitter.dogfood.internal.zeta'
+
+  # ad-hoc requests
+  elif args.build_type == 'Highlight':
+    PROFILE = ''
+    BUNDLE_ID = 'com.twitter.dogfood.internal.alpha'
+
   # now build it!
   make_build(build_type=args.build_type)
   
@@ -137,4 +196,5 @@ if __name__ == '__main__':
   elif args.build_type == 'Production':
     build_production()
 """ 
+
 
