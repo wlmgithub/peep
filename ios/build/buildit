@@ -2,6 +2,7 @@
 #
 # Build Twitter App natively
 #
+import sys
 import os
 import argparse
 from subprocess import call
@@ -29,7 +30,9 @@ def make_build(build_type=None):
     
   call('mkdir -p  buildResults/%s' % build_type, shell=True)
   
-  call('/usr/bin/xcodebuild -alltargets clean', shell=True)
+  retcode = call('/usr/bin/xcodebuild -alltargets clean', shell=True)
+  if retcode != 0:
+    sys.exit(1)
 
   BUNDLE_ID_OVERRIDE = ''
   if BUNDLE_ID is not None:
@@ -39,7 +42,9 @@ def make_build(build_type=None):
   if PROFILE is not None:
     PROVISIONING_PROFILE_OVERRIDE = 'PROVISIONING_PROFILE=' + PROFILE
   
-  call("/usr/bin/xcodebuild -scheme %s  -configuration '%s' -sdk iphoneos DSTROOT=buildResults/%s  DWARF_DSYM_FOLDER_PATH=buildResults/%s  DEPLOYMENT_LOCATION=YES  RUN_CLANG_STATIC_ANALYZER=YES %s %s build" % ( SCHEME, CONFIGURATION, build_type, build_type, BUNDLE_ID_OVERRIDE, PROVISIONING_PROFILE_OVERRIDE), shell=True)
+  retcode = call("/usr/bin/xcodebuild -scheme %s  -configuration '%s' -sdk iphoneos DSTROOT=buildResults/%s  DWARF_DSYM_FOLDER_PATH=buildResults/%s  DEPLOYMENT_LOCATION=YES  RUN_CLANG_STATIC_ANALYZER=YES %s %s build" % ( SCHEME, CONFIGURATION, build_type, build_type, BUNDLE_ID_OVERRIDE, PROVISIONING_PROFILE_OVERRIDE), shell=True)
+  if retcode != 0:
+    sys.exit(1)
 
   # package and sign
   os.chdir('%s/Twitter/buildResults/%s/Applications' % (os.environ['WORKSPACE'], build_type))
@@ -59,7 +64,9 @@ def make_build(build_type=None):
   if args.debug:
     print "[DEBUG] running command: %s" % build_cmd
 
-  call(build_cmd, shell=True)
+  retcode = call(build_cmd, shell=True)
+  if retcode != 0:
+    sys.exit(1)
   
   
   
