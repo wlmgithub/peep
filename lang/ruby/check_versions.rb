@@ -81,8 +81,8 @@ hosts = Loony::Client.list(:dc => [opts[:dc]], :roles => [opts[:role]])
 =begin
 # use these smfd hosts for testing
 hosts = %w(
-  smfd-amm-20-sr1.devel.twitter.com
-  smfd-aml-20-sr1.devel.twitter.com
+  smfd-amm-20-sr1.devel.foobar.com
+  smfd-aml-20-sr1.devel.foobar.com
 )
 pp hosts
 =end

@@ -10,7 +10,7 @@
 #
 # connect to db
 # get live version
-dbhost = "smfc-aih-11-sr1.corpdc.twitter.com"
+dbhost = "smfc-aih-11-sr1.corpdc.foobar.com"
 user = "rel_info_admin"
 password = "<use_the_real_pwd_for_real>"
 database = "release_info"
@@ -23,7 +23,7 @@ con = mdb.connect(host=dbhost, user=user, passwd=password, db=database, port=por
 
 if con: 
   cur = con.cursor()
-  cur.execute("select `master_sha1` from release_change where `live` = true  and `app` = 'twitter'")
+  cur.execute("select `master_sha1` from release_change where `live` = true  and `app` = 'foobar'")
 
   rows = cur.fetchall()
 

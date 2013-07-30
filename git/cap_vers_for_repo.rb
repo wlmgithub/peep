@@ -10,8 +10,8 @@ def capvers_for_repo(dir)
       infos = capfile_entry.split
       contents = `git cat-file -p #{infos[2]}`
       puts "\tcap entries for #{infos[3]}:"
-      caplines = contents.grep /gem 'twitter-cap-utils/
-      caplines += contents.grep /require 'twitter_cap_utils/
+      caplines = contents.grep /gem 'foobar-cap-utils/
+      caplines += contents.grep /require 'foobar_cap_utils/
       caplines.each {|l| puts "\t\t#{l}"}
     end
     nil

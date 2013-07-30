@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'net/sftp'
 
-Net::SFTP.start('nest1.corp.twitter.com', 'liming', :password => 'password') do |sftp|
+Net::SFTP.start('nest1.corp.foobar.com', 'liming', :password => 'password') do |sftp|
   # upload a file or directory to the remote host
   sftp.upload!("/Users/liming/jk/s", "/home/liming/s")
 #

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Build twitter iOS native app
+# Build foobar iOS native app
 #
 # n: train_name
 # d: train_display_name
@@ -51,8 +51,8 @@ dogfood_build() {
   /usr/bin/xcodebuild -scheme Enterprise  -configuration 'Enterprise (Release)' -sdk iphoneos DSTROOT=buildResults/Dogfood DWARF_DSYM_FOLDER_PATH=buildResults/Dogfood  DEPLOYMENT_LOCATION=YES build
   
   # package and sign the build
-  cd "$WORKSPACE/Twitter/buildResults/Dogfood/Applications"
-  /usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign 'iPhone Distribution: Twitter' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/<insert_profile_here>.mobileprovision -o "$WORKSPACE/Twitter/buildResults/Dogfood/Twitter.ipa"
+  cd "$WORKSPACE/foobar/buildResults/Dogfood/Applications"
+  /usr/bin/xcrun -sdk iphoneos PackageApplication -v foobar.app --sign 'iPhone Distribution: foobar' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/<insert_profile_here>.mobileprovision -o "$WORKSPACE/foobar/buildResults/Dogfood/foobar.ipa"
 
 }
 
@@ -61,10 +61,10 @@ production_build() {
 
   mkdir -p  buildResults/Production 
   /usr/bin/xcodebuild -alltargets clean
-  /usr/bin/xcodebuild -scheme Production  -target Twitter -configuration 'Production (Release)' -sdk iphoneos DSTROOT=buildResults/Production DWARF_DSYM_FOLDER_PATH=buildResults/Production  DEPLOYMENT_LOCATION=YES  build
+  /usr/bin/xcodebuild -scheme Production  -target foobar -configuration 'Production (Release)' -sdk iphoneos DSTROOT=buildResults/Production DWARF_DSYM_FOLDER_PATH=buildResults/Production  DEPLOYMENT_LOCATION=YES  build
   
-  cd "$WORKSPACE/Twitter/buildResults/Production/Applications"
-  /usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign "iPhone Distribution: Twitter, Inc." --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/<insert_profile_here>.mobileprovision -o "$WORKSPACE/Twitter/buildResults/Production/Twitter.ipa"
+  cd "$WORKSPACE/foobar/buildResults/Production/Applications"
+  /usr/bin/xcrun -sdk iphoneos PackageApplication -v foobar.app --sign "iPhone Distribution: foobar, Inc." --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/<insert_profile_here>.mobileprovision -o "$WORKSPACE/foobar/buildResults/Production/foobar.ipa"
 
 }
 
@@ -81,10 +81,10 @@ export TRAIN_DISPLAY_NAME=$TRAIN_DISPLAY_NAME
 security unlock-keychain -p <insert_password_here>  $HOME/Library/Keychains/iOS.keychain
 
 # build baby
-rm -rf ~/Library/Developer/Xcode/DerivedData/Twitter-*/
+rm -rf ~/Library/Developer/Xcode/DerivedData/foobar-*/
 cd $WORKSPACE
 git clean -df
-cd $WORKSPACE/Twitter
+cd $WORKSPACE/foobar
 
 if [[ $TYPE == "Dogfood" ]]; then
 

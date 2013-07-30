@@ -4,7 +4,7 @@
 #
 
 #   tunnel_cmd = %Q(
-#     ssh -N -L 3311:smf1-acl-35-sr1.prod.twitter.com:3306 -o StrictHostKeyChecking=no nest2.corp.twitter.com
+#     ssh -N -L 3311:smf1-acl-35-sr1.prod.foobar.com:3306 -o StrictHostKeyChecking=no nest2.corp.foobar.com
 #   )
 #   system(tunnel_cmd)
 
@@ -16,7 +16,7 @@ def setup_tunnel
   # NOTE: use quote but NOT %Q...
   #       because %Q increments the tunnel_cmd pid by 1
   #       weird...
-   tunnel_cmd = "ssh -N -L 3311:smf1-acl-35-sr1.prod.twitter.com:3306 -o StrictHostKeyChecking=no nest2.corp.twitter.com"
+   tunnel_cmd = "ssh -N -L 3311:smf1-acl-35-sr1.prod.foobar.com:3306 -o StrictHostKeyChecking=no nest2.corp.foobar.com"
    pipe = IO.popen(tunnel_cmd)
    puts "setup pipe pid: #{pipe.pid}"
    sleep 1

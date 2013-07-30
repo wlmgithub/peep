@@ -6,11 +6,11 @@ import optparse
 import os
 import subprocess
 import sys
-from twitter import util
+from foobar import util
 
 BASE_PATH = '/data/git'
-BASE_URL = 'https://git.twitter.biz'
-JIRA_URL = 'http://jira.local.twitter.com/browse/%s'
+BASE_URL = 'https://git.foobar.biz'
+JIRA_URL = 'http://jira.local.foobar.com/browse/%s'
 PASSWD_PATH = '/etc/twkeys/apache/reviewboard/db_passwd'
 
 reviewboard_passwd = open(PASSWD_PATH).read().strip()
@@ -111,10 +111,10 @@ repo.url=%(repo)s
 repo.name=%(repo)s
 repo.desc=%(description)s
 repo.path=%(repo_path)s
-repo.owner=Twitter, Inc.
+repo.owner=foobar, Inc.
 repo.defbranch=master
 repo.snapshots=tar.bz2
-repo.clone-url=https://git.twitter.biz/%(repo)s
+repo.clone-url=https://git.foobar.biz/%(repo)s
 """ % {
         'repo': name,
         'description': repo.get('description', 'Unknown'),
@@ -132,7 +132,7 @@ repo.clone-url=https://git.twitter.biz/%(repo)s
 
 
 # Connect to the reviewboard backend.. We have to do this regardless.
-conn = MySQLdb.connect(host='smfc-aih-11-sr1.corpdc.twitter.com',
+conn = MySQLdb.connect(host='smfc-aih-11-sr1.corpdc.foobar.com',
                        user='reviewbrd_admin',
                        passwd=reviewboard_passwd,
                        db='reviewboard')

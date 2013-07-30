@@ -15,7 +15,7 @@ end
 username = ARGV[0]
 password = get_password()
 
-jira = Jira4R::JiraTool.new(2, "http://jira.local.twitter.com")
+jira = Jira4R::JiraTool.new(2, "http://jira.local.foobar.com")
 jira.login(username, password)
 
 p jira.getProjectByKey('BUILD')

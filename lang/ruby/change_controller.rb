@@ -19,7 +19,7 @@ class Campfire
   def initialize(opts={})
     @token = opts[:token] || MRTALKYBOT_TOKEN
     @room = opts[:room] || ROOM_TEST
-    @subdomain = opts[:subdomain] || "twitter"
+    @subdomain = opts[:subdomain] || "foobar"
     @url = "https://#{@subdomain}.campfirenow.com/room/#{@room}/speak.json"
   end
 
@@ -69,7 +69,7 @@ end
 end
 
 class ChangeController < ApplicationController
-  require 'twitter'
+  require 'foobar'
 
   before_filter :fail_if_not_up_to_date, :except => [:send_data, :fetch, :get, :search, :search_by_title, :current_max_update_date, :index]
   before_filter :send_data, :except => [:fetch, :search, :search_by_title, :get, :check_last_updated, :fail_if_not_up_to_date, :current_max_update_date, :index]
@@ -168,18 +168,18 @@ class ChangeController < ApplicationController
   end
 
   def tweet(change, action)
-    Twitter.configure do |config|
+    foobar.configure do |config|
       config.consumer_key = '<key>'
       config.consumer_secret = '<sec>'
       config.oauth_token = '<token>'
       config.oauth_token_secret = '<token_sec>'
       unless RAILS_ENV == 'development'
-        config.endpoint = "http://api.local.twitter.com:9000"
+        config.endpoint = "http://api.local.foobar.com:9000"
       end
     end
 
-    client = Twitter::Client.new
-    client.update('Disruptive change "' + change.title.slice(0,50) + '" ' + action + ': https://cm.local.twitter.com/change/' + change.id.to_s())
+    client = foobar::Client.new
+    client.update('Disruptive change "' + change.title.slice(0,50) + '" ' + action + ': https://cm.local.foobar.com/change/' + change.id.to_s())
   end
 
   def search_by_title
@@ -217,18 +217,18 @@ class ChangeController < ApplicationController
     if params[:change][:status] != change.status
       # user is moving change from in_progress to completed
       if params[:change][:status] == 'completed'
-        message = " has completed '#{change.type.name}' change '#{params[:change][:title]}' - http://cm.local.twitter.com/change/#{params[:change][:id]}"
+        message = " has completed '#{change.type.name}' change '#{params[:change][:title]}' - http://cm.local.foobar.com/change/#{params[:change][:id]}"
         # set the completed_date field
         params[:change][:completed_date]  = Time.now.getutc
       # user is moving change from ready to in_progress
       elsif params[:change][:status] == 'in_progress'
-        message = " is starting '#{change.type.name}' change '#{params[:change][:title]}' - http://cm.local.twitter.com/change/#{params[:change][:id]}"
+        message = " is starting '#{change.type.name}' change '#{params[:change][:title]}' - http://cm.local.foobar.com/change/#{params[:change][:id]}"
         locked = change.isInterlocked?
         # set the start_date field
         params[:change][:start_date]  = Time.now.getutc
       # user is moving from in_progress to ready
       elsif params[:change][:status] == 'ready'
-        message = " is stopping work on '#{change.type.name}' change '#{params[:change][:title]}' - http://cm.local.twitter.com/change/#{params[:change][:id]}"
+        message = " is stopping work on '#{change.type.name}' change '#{params[:change][:title]}' - http://cm.local.foobar.com/change/#{params[:change][:id]}"
       else
         messaage = "unkown change type: #{params[:change][:status]}..."
       end

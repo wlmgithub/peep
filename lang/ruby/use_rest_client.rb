@@ -10,9 +10,9 @@
 #     Author: Florian Frank
 #         Rubyforge: http://rubyforge.org/projects/json
 #             Homepage: http://flori.github.com/json
-#                 Installed at (1.6.1): /usr/local/rvm/gems/ree-1.8.7-2011.03@twitter
-#                                  (1.6.0): /usr/local/rvm/gems/ree-1.8.7-2011.03@twitter
-#                                                   (1.1.9): /usr/local/rvm/gems/ree-1.8.7-2011.03@twitter
+#                 Installed at (1.6.1): /usr/local/rvm/gems/ree-1.8.7-2011.03@foobar
+#                                  (1.6.0): /usr/local/rvm/gems/ree-1.8.7-2011.03@foobar
+#                                                   (1.1.9): /usr/local/rvm/gems/ree-1.8.7-2011.03@foobar
 #
 #                                                       JSON Implementation for Ruby
 #
@@ -26,8 +26,8 @@
 #rest-client (1.6.7, 0.9)
 #    Authors: Adam Wiggins, Julien Kirch
 #        Homepage: http://github.com/archiloque/rest-client
-#            Installed at (1.6.7): /usr/local/rvm/gems/ree-1.8.7-2011.03@twitter
-#                             (0.9): /usr/local/rvm/gems/ree-1.8.7-2011.03@twitter
+#            Installed at (1.6.7): /usr/local/rvm/gems/ree-1.8.7-2011.03@foobar
+#                             (0.9): /usr/local/rvm/gems/ree-1.8.7-2011.03@foobar
 #
 #                                 Simple HTTP and REST client for Ruby, inspired by microframework
 #                                     syntax for specifying actions.
@@ -40,7 +40,7 @@ require 'rest-client'
 user = '' # need real name
 pass = '' # need real pass
 
-uri_str = %Q(http://#{user}:#{pass}@release.local.twitter.com/pellets.json)
+uri_str = %Q(http://#{user}:#{pass}@release.local.foobar.com/pellets.json)
 
 pellets_str = (RestClient.get URI.escape("#{uri_str}")).body
 pellets = JSON.parse pellets_str

@@ -6,7 +6,7 @@ require 'mysql'
 require 'date'
 
 #### constants
-BASE_DIR = '/home/falcon/hostmon/logs-twitterweb'
+BASE_DIR = '/home/falcon/hostmon/logs-foobarweb'
 
 def get_db_connection
   begin
@@ -120,13 +120,13 @@ def process_bin_file(dbh, bin_file, given_dir_name=given_dir_name)
     puts "LINE: ~~#{line}~~"
     ##############################
     # line is like this:
-    # smf1-aah-19-sr2.prod.twitter.com |SCP OK|SSH OK|WEBSH OK|CONFIG_DIR OK|TWITTER_DIR OK|CURRENT_LINK OK|HTTPD_LOG OK|LIVE_MATCH OK  |UPTIME OK  |UNICORN-8000 OK  |RAINBOWS OK  |TWITCHER OK  |MEMCACHED-22422 OK  |APACHE OK  |8080 OK  |8000 OK  |9000 OK  |UNICORN_PS_MATCH OK   |RAINBOWS_PS_MATCH OK 
+    # smf1-aah-19-sr2.prod.foobar.com |SCP OK|SSH OK|WEBSH OK|CONFIG_DIR OK|foobar_DIR OK|CURRENT_LINK OK|HTTPD_LOG OK|LIVE_MATCH OK  |UPTIME OK  |UNICORN-8000 OK  |RAINBOWS OK  |TWITCHER OK  |MEMCACHED-22422 OK  |APACHE OK  |8080 OK  |8000 OK  |9000 OK  |UNICORN_PS_MATCH OK   |RAINBOWS_PS_MATCH OK 
     ##############################
     if line.include?('|')
       line_ary = line.gsub(/\s+\|/, '|').split('|') 
       ##############################
       # line_array is like this:
-      # ["smf1-aah-19-sr2.prod.twitter.com", "SCP OK", "SSH OK", "WEBSH OK", "CONFIG_DIR OK", "TWITTER_DIR OK", "CURRENT_LINK OK", "HTTPD_LOG OK", "LIVE_MATCH OK", "UPTIME OK", "UNICORN-8000 OK", "RAINBOWS OK", "TWITCHER OK", "MEMCACHED-22422 OK", "APACHE OK", "8080 OK", "8000 OK", "9000 OK", "UNICORN_PS_MATCH OK", "RAINBOWS_PS_MATCH OK"]
+      # ["smf1-aah-19-sr2.prod.foobar.com", "SCP OK", "SSH OK", "WEBSH OK", "CONFIG_DIR OK", "foobar_DIR OK", "CURRENT_LINK OK", "HTTPD_LOG OK", "LIVE_MATCH OK", "UPTIME OK", "UNICORN-8000 OK", "RAINBOWS OK", "TWITCHER OK", "MEMCACHED-22422 OK", "APACHE OK", "8080 OK", "8000 OK", "9000 OK", "UNICORN_PS_MATCH OK", "RAINBOWS_PS_MATCH OK"]
       ##############################
       host = line_ary.shift
       printf("%s, %s\n",  host, ts)

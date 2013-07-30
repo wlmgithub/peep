@@ -3,8 +3,8 @@
 require 'open-uri'
 
 def check_health
-  #my_url  = 'http://release.local.twitter.com/health'
-  my_url = 'http://ganglia.smf1.twitter.com/check_key_metrics.php'
+  #my_url  = 'http://release.local.foobar.com/health'
+  my_url = 'http://ganglia.smf1.foobar.com/check_key_metrics.php'
 
   text = open(my_url).read
   if text =~ /CRITICAL/

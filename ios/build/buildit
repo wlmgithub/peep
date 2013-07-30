@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 #
-# Build Twitter App natively
+# Build foobar App natively
 #
 import sys
 import os
 import argparse
 from subprocess import call
 
-parser = argparse.ArgumentParser(description='Build Twitter app natively.')
+parser = argparse.ArgumentParser(description='Build foobar app natively.')
 
 parser.add_argument('--debug', dest='debug', action='store_true', help='Debug mode')
 parser.add_argument('--build_type', dest='build_type', help='Type of build. Currently either Dogfood or Production')
@@ -36,7 +36,7 @@ def make_build(build_type=None):
 
   BUNDLE_ID_OVERRIDE = ''
   if BUNDLE_ID is not None:
-    BUNDLE_ID_OVERRIDE = 'TWITTER_BUNDLE_IDENTIFIER=' + BUNDLE_ID
+    BUNDLE_ID_OVERRIDE = 'foobar_BUNDLE_IDENTIFIER=' + BUNDLE_ID
 
   PROVISIONING_PROFILE_OVERRIDE = ''
   if PROFILE is not None:
@@ -47,9 +47,9 @@ def make_build(build_type=None):
     sys.exit(1)
 
   # package and sign
-  os.chdir('%s/Twitter/buildResults/%s/Applications' % (os.environ['WORKSPACE'], build_type))
+  os.chdir('%s/foobar/buildResults/%s/Applications' % (os.environ['WORKSPACE'], build_type))
   
-  BUILD_CMD = "/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign '%s' --embed %s/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/Twitter/buildResults/%s/Twitter.ipa'"
+  BUILD_CMD = "/usr/bin/xcrun -sdk iphoneos PackageApplication -v foobar.app --sign '%s' --embed %s/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/foobar/buildResults/%s/foobar.ipa'"
 
   build_cmd = BUILD_CMD % (
     SIGN,
@@ -59,7 +59,7 @@ def make_build(build_type=None):
     build_type
   )
 
-#  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign '%s' --embed %s/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/Twitter/buildResults/%s/Twitter.ipa'" % (SIGN, os.environ['HOME'], PROFILE, os.environ['WORKSPACE'], build_type), shell=True) 
+#  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v foobar.app --sign '%s' --embed %s/Library/MobileDevice/Provisioning\ Profiles/%s.mobileprovision -o '%s/foobar/buildResults/%s/foobar.ipa'" % (SIGN, os.environ['HOME'], PROFILE, os.environ['WORKSPACE'], build_type), shell=True) 
 
   if args.debug:
     print "[DEBUG] running command: %s" % build_cmd
@@ -84,9 +84,9 @@ def build_dogfood():
   call("/usr/bin/xcodebuild -scheme Enterprise  -configuration 'Enterprise (Release)' -sdk iphoneos DSTROOT=buildResults/Dogfood DWARF_DSYM_FOLDER_PATH=buildResults/Dogfood  DEPLOYMENT_LOCATION=YES build", shell=True)
 
   # package and sign
-  os.chdir('%s/Twitter/buildResults/Dogfood/Applications' % os.environ['WORKSPACE'])
+  os.chdir('%s/foobar/buildResults/Dogfood/Applications' % os.environ['WORKSPACE'])
 
-  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign 'iPhone Distribution: Twitter' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/D05741DB-74E5-4677-B1B0-490B41112913.mobileprovision -o '%s/Twitter/buildResults/Dogfood/Twitter.ipa'" % os.environ['WORKSPACE'], shell=True) 
+  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v foobar.app --sign 'iPhone Distribution: foobar' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/D05741DB-74E5-4677-B1B0-490B41112913.mobileprovision -o '%s/foobar/buildResults/Dogfood/foobar.ipa'" % os.environ['WORKSPACE'], shell=True) 
 
   pass
 
@@ -98,12 +98,12 @@ def build_production():
 
   call('/usr/bin/xcodebuild -alltargets clean', shell=True)
 
-  call("/usr/bin/xcodebuild -scheme Production -target Twitter -configuration 'Production (Release)' -sdk iphoneos DSTROOT=buildResults/Production DWARF_DSYM_FOLDER_PATH=buildResults/Production  DEPLOYMENT_LOCATION=YES build", shell=True)
+  call("/usr/bin/xcodebuild -scheme Production -target foobar -configuration 'Production (Release)' -sdk iphoneos DSTROOT=buildResults/Production DWARF_DSYM_FOLDER_PATH=buildResults/Production  DEPLOYMENT_LOCATION=YES build", shell=True)
 
   # package and sign
-  os.chdir('%s/Twitter/buildResults/Production/Applications' % os.environ['WORKSPACE'])
+  os.chdir('%s/foobar/buildResults/Production/Applications' % os.environ['WORKSPACE'])
 
-  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v Twitter.app --sign 'iPhone Distribution: Twitter, Inc.' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/4228BAF4-F544-4832-A3FA-0CAF3C50DC55.mobileprovision -o '%s/Twitter/buildResults/Production/Twitter.ipa'" % os.environ['WORKSPACE'], shell=True)
+  call("/usr/bin/xcrun -sdk iphoneos PackageApplication -v foobar.app --sign 'iPhone Distribution: foobar, Inc.' --embed /Users/jenkins/Library/MobileDevice/Provisioning\ Profiles/4228BAF4-F544-4832-A3FA-0CAF3C50DC55.mobileprovision -o '%s/foobar/buildResults/Production/foobar.ipa'" % os.environ['WORKSPACE'], shell=True)
 
   pass
 
@@ -123,7 +123,7 @@ def make_preps():
   else:
     print "security unlock-keychain failed!"
 
-  call('rm -rf %s/Library/Developer/Xcode/DerivedData/Twitter-*/' % os.environ['HOME'], shell=True)
+  call('rm -rf %s/Library/Developer/Xcode/DerivedData/foobar-*/' % os.environ['HOME'], shell=True)
   
   call('cd %s' % os.environ['WORKSPACE'], shell=True)
 
@@ -131,7 +131,7 @@ def make_preps():
   if args.build_type == 'Dogfood':
     call('git clean -df', shell=True)
 
-  os.chdir('%s/Twitter' % os.environ['WORKSPACE'])
+  os.chdir('%s/foobar' % os.environ['WORKSPACE'])
 
 
 if __name__ == '__main__':
@@ -149,7 +149,7 @@ if __name__ == '__main__':
   PROFILE=None
   CONFIGURATION = 'Enterprise (Release)'
   SCHEME='Enterprise'
-  SIGN = 'iPhone Distribution: Twitter'
+  SIGN = 'iPhone Distribution: foobar'
   BUNDLE_ID=None
 
   if args.build_type == 'Dogfood':
@@ -158,41 +158,41 @@ if __name__ == '__main__':
     CONFIGURATION = 'Enterprise Demo (Release)'
     PROFILE = ''
     SCHEME='Enterprise Demo'
-    SIGN = 'iPhone Distribution: Twitter'
+    SIGN = 'iPhone Distribution: foobar'
   elif args.build_type == 'ProductionDemo':
     CONFIGURATION = 'Production Demo (Release)'
     PROFILE = ''
     SCHEME='Production Demo'
-    SIGN = 'iPhone Distribution: Twitter, Inc.'
+    SIGN = 'iPhone Distribution: foobar, Inc.'
   elif args.build_type == 'Prototype':
     PROFILE = ''
   elif args.build_type == 'Production':
     CONFIGURATION = 'Production (Release)'
     PROFILE = ''
     SCHEME='Production'
-    SIGN = 'iPhone Distribution: Twitter, Inc.'
+    SIGN = 'iPhone Distribution: foobar, Inc.'
 
   # Dogfood Alpha - Zeta
   elif args.build_type == 'DogfoodAlpha':
     PROFILE = ''
-    BUNDLE_ID = 'com.twitter.dogfood.internal.alpha'
+    BUNDLE_ID = 'com.foobar.dogfood.internal.alpha'
   elif args.build_type == 'DogfoodBeta':
     PROFILE = ''
-    BUNDLE_ID = 'com.twitter.dogfood.internal.beta'
+    BUNDLE_ID = 'com.foobar.dogfood.internal.beta'
   elif args.build_type == 'DogfoodGamma':
     PROFILE = ''
-    BUNDLE_ID = 'com.twitter.dogfood.internal.gamma'
+    BUNDLE_ID = 'com.foobar.dogfood.internal.gamma'
   elif args.build_type == 'DogfoodEpsilon':
     PROFILE = ''
-    BUNDLE_ID = 'com.twitter.dogfood.internal.epsilon'
+    BUNDLE_ID = 'com.foobar.dogfood.internal.epsilon'
   elif args.build_type == 'DogfoodZeta':
     PROFILE = ''
-    BUNDLE_ID = 'com.twitter.dogfood.internal.zeta'
+    BUNDLE_ID = 'com.foobar.dogfood.internal.zeta'
 
   # ad-hoc requests
   elif args.build_type == 'Highlight':
     PROFILE = ''
-    BUNDLE_ID = 'com.twitter.dogfood.internal.alpha'
+    BUNDLE_ID = 'com.foobar.dogfood.internal.alpha'
 
   # now build it!
   make_build(build_type=args.build_type)
