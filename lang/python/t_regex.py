@@ -1,7 +1,7 @@
 
 import re
 
-#jiraidRegex = re.compile('jira(?:-id)?:\s*[-a-z0-9]*', re.IGNORECASE)
+jiraidRegex = re.compile('(?:jira|ticket)(?:-id)?:\s*[-a-z0-9]*', re.IGNORECASE)
 
 
 comment = '''
@@ -13,6 +13,11 @@ ticket: tkt-1234
 TiCkET-iD:   TTT-98987
 ticket-ID:yyy-222
 
+Set search name to equal query in search container
+
+Change-Id: I5b9815a269ee401a1f512b3ab98047d868ec9c92
+Ticket-Id: TRENDS-1612
+
 '''
 
 #jira_id = jiraidRegex.search(comment).group()[8:].strip()
@@ -23,7 +28,8 @@ ticket-ID:yyy-222
 #print re.sub(r'(?i)-id', '', m)[5:].strip()
 
 
-for m in  re.findall('(?:jira|ticket)(?:-id)?:\s*[-a-z0-9]*', comment, re.IGNORECASE):
+#for m in  re.findall('(?:jira|ticket)(?:-id)?:\s*[-a-z0-9]*', comment, re.IGNORECASE):
+for m in  re.findall(jiraidRegex, comment):
   print m, '|',
 #  jira_id = re.sub(r'(?i)-id', '', m)[5:].strip()
 
