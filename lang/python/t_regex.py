@@ -23,7 +23,7 @@ TiCkET-iD:   TTT-98987
 
 
 for m in  re.findall('(?:jira|ticket)(?:-id)?:\s*[-a-z0-9]*', comment, re.IGNORECASE):
-  print m, '|', 
+  print m, '|',
 #  jira_id = re.sub(r'(?i)-id', '', m)[5:].strip()
 
 #  m = re.sub(r'(?i)-id', '', m)
@@ -36,7 +36,7 @@ for m in  re.findall('(?:jira|ticket)(?:-id)?:\s*[-a-z0-9]*', comment, re.IGNORE
   print jira_id
 
 """
-$ python t_regex.py 
+$ python t_regex.py
 jira-iD: ios-123 | ios-123
 jira: mod-12345 | mod-12345
 ticket: tkt-1234 | tkt-1234
